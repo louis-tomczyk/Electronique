@@ -5,8 +5,6 @@
 %                         Attribution - Non-Commercial - Share Alike 4.0 International
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-%\begin{comment}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,37 +117,3 @@ bruit initiale:
 \be
     \boxed{t_{BB'} = \frac{P_b^{(BB')}}{P_b} = 1-\frac{1}{c_s}}
 \ee
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{comment}
-\subsection{Bruits en télécommunications}
-
-En télécommunications les signaux sont modulés et occupent une certaine bande
-spectrale que l'on note $B_0$.
-Dans le cas mono-canal avec un filtre de mise en forme en racine de cosinus-
-surélevé, la largeur fréquentielle du signal est proportionnelle au débit de
-symboles.
-Or tout signal comporte du bruit provenant de sa génération.
-Le bruit dans la bande spectrale intrinsèque au signal est a différencier du
-bruit en dehors, pouvant provenir d'autres sources/phénomènes.
-
-On peut alors distinguer le Rapport Signal à Bruit Propre (RSBP) au signal du
-Rapport Signal à Bruit (RSB) prenant le tout.
-On a alors naturellement:
-\be
-    RSBP>RSB.
-\ee
-Toute acquisition numérique implique donc un échantillonnage en respectant le
-critère de Nyquist-Shannon s'accompagnant, comme mentionné précédemment, d'une
-diminution du niveau de bruit dans la bande propre du signal.
-Plus formellement, on note RSBP$_0$ le RSBP lorsqu'il n'y a pas de sur-échan
-tillonage et RSBP quand il y en a.
-\be
-    RSBP_0 = P_s/(\gamma_0\d B_0) \And RSBP = P_s/(\gamma\d B_0)
-\ee
-
-On a alors:
-\be
-    RSBP = c_s\d RSBP_0
-\ee
-\end{comment}
