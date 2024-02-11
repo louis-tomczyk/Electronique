@@ -1,0 +1,155 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% author                : louis tomczyk
+% date of production    : 2024-02-11
+% licence               : cc-by-nc-sa
+%                         Attribution - Non-Commercial - Share Alike 4.0 International
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\begin{comment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Impact sur le bruit}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Densité spectrale du bruit}
+
+\bdefbox
+    La variance du bruit est liée à l'erreur de quantification selon:
+    \be
+        \var{e} = \dfrac{1}{q}\d \int_{-q/2}^{q/2}e^2de = \dfrac{q^2}{12}
+    \ee
+
+    La Densité Spectrale de Puissance (DSP) du bruit lie la puissance du bruit
+    à la plage de fréquence considérée selon:
+    \be
+        P_e = \int_{-f_e/2}^{f_e/2}~\gamma(f)df \tq \gamma\equiv [W/Hz]
+    \ee
+
+    où $f_e~[Hz]$ est la fréquence d'échantillonnage.
+\edefbox
+
+Or la puissance d'un signal aléatoire \underline{centré} est exactement sa variance:
+\be
+    \coloredbox{green!50!black}{P_e = \braket{|e|^2} = \var{e}}
+\ee
+
+On peut donc en déduire la DSP:
+\be
+    \gamma(f) = \dfrac{\var{e}}{f_e} = \dfrac{q^2}{12\d f_e}
+\ee
+
+\paragraph{Remarque}
+Ce qui n'est rien d'autre que la variance d'une variable aléatoire uniforme
+sur le segment $[-1,1]\d q/2$.
+
+\bdbox
+    Pour un signal purement sinusoïdal:
+    \be
+        x(t) = A\d cos(\omega t) \implies
+        P_x = \dfrac{1}{T}\d\int_T|x^2(t)|dt = \dfrac{A^2}{2}
+    \ee
+
+    Le Rapport Signal à Bruit (RSB) s'écrit alors:
+    \be
+    \left\{
+        \begin{array}{ccc}
+        RSB &=& \dfrac{P_x}{P_e} = 6\d \dfrac{A^2}{q^2}\\
+        q   &=& \dfrac{PE}{2^{N_b}}
+        \end{array}
+    \right.\implies
+    RSB = \dfrac{3}{2}\d 2^{2N_b}\d \l(\dfrac{2A}{PE}\r)^2
+    \ee
+
+    Ou encore en échelle log:
+    \be
+        \coloredbox{green!50!black}{RSB_{dB} = 10\d \log_{10}(RSB)
+        \approx 1.76+6.02\d N_b+20\log_{10}\l(\dfrac{2A}{PE}\r)}
+    \ee
+
+    \textbf{On remarque donc que pour une entrée sinusoïdale, chaque bit de quantification
+    supplémentaire réduit par 4 le niveau de bruit ($6~[dB]$)!}
+\edbox
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Étalement du bruit}
+
+Dans le cas d'un bruit blanc dans la bande spectrale considérée $B$
+nous avons tout simplement la puissance du bruit $P_b$ qui s'écrit
+en fonction de la densité spectrale de bruit $f\mapsto \gamma(f)$
+qui est constante à $\gamma$:
+\be
+    P_b = B\d \gamma_0
+\ee
+
+Sur-échantillonner n'ajoute dans l'idéal pas de bruit car on ne change
+pas les statistiques du signal que l'on échantillonne.
+À puissance contante, si le support s'élargit (devient $B'$) sans modifier
+la nature de $\gamma$ alors dans ce cas on a une nouvelle densité de bruit
+$\gamma'$, illustrée sur la \autoref{fig:EtalementSurechantillonage} telle que:
+\be
+    \coloredbox{green!50!black}{P_b = B'\d \gamma' \tq B' = c_s\d B \tq c_s\geq 2}
+\ee
+
+où l'on introduit le coefficient de Shannon $c_s$.
+On peut alors calculer $\gamma'$ selon:
+\be
+    P_b= P_b\iff \gamma' = \gamma_0/c_s
+\ee
+
+\input{Figures/Étalement_Spectre_Surechantillonage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Taux de rejet}
+
+Dans la bande d'intérêt $B$ la puissance de bruit $P_b^{(B)}$ a diminué:
+\be
+    \boxed{P_b^{(B)} = \gamma'\d B = P_b/c_s}
+\ee
+
+Et la puissance de bruit transférée dans la bande externe $P_b^{(BB')}$ est:
+\be
+    P_b^{(BB')} = P_b-P_b^{(B)} = \l(1-\frac{1}{c_s}\r)\d P_b
+\ee
+
+On peut alors définir un taux de rejet $t_{BB'}$ comme étant le rapport de la
+puissance de bruit rejetée hors de la bande d'intérêt sur la puissance de
+bruit initiale:
+\be
+    \boxed{t_{BB'} = \frac{P_b^{(BB')}}{P_b} = 1-\frac{1}{c_s}}
+\ee
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{comment}
+\subsection{Bruits en télécommunications}
+
+En télécommunications les signaux sont modulés et occupent une certaine bande
+spectrale que l'on note $B_0$.
+Dans le cas mono-canal avec un filtre de mise en forme en racine de cosinus-
+surélevé, la largeur fréquentielle du signal est proportionnelle au débit de
+symboles.
+Or tout signal comporte du bruit provenant de sa génération.
+Le bruit dans la bande spectrale intrinsèque au signal est a différencier du
+bruit en dehors, pouvant provenir d'autres sources/phénomènes.
+
+On peut alors distinguer le Rapport Signal à Bruit Propre (RSBP) au signal du
+Rapport Signal à Bruit (RSB) prenant le tout.
+On a alors naturellement:
+\be
+    RSBP>RSB.
+\ee
+Toute acquisition numérique implique donc un échantillonnage en respectant le
+critère de Nyquist-Shannon s'accompagnant, comme mentionné précédemment, d'une
+diminution du niveau de bruit dans la bande propre du signal.
+Plus formellement, on note RSBP$_0$ le RSBP lorsqu'il n'y a pas de sur-échan
+tillonage et RSBP quand il y en a.
+\be
+    RSBP_0 = P_s/(\gamma_0\d B_0) \And RSBP = P_s/(\gamma\d B_0)
+\ee
+
+On a alors:
+\be
+    RSBP = c_s\d RSBP_0
+\ee
+\end{comment}

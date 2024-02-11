@@ -1,0 +1,105 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% author                : louis tomczyk
+% date of production    : 2024-02-11
+% licence               : cc-by-nc-sa
+%                         Attribution - Non-Commercial - Share Alike 4.0 International
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conversion d'une valeur analogique}
+
+\bdefbox
+	En entrée on a un signal à temps continu $(x)$ que l'on transforme en signal discret
+	$(b_k)_{k\in J\subset \N}$.
+	L'équation de définition du convertisseur est:
+	\be
+		x[k] = V_{min}+\l(\sum_{j=1}^{N_b+1} \dfrac{b_j[k]}{2^j}\r)\d PE+e
+	\ee
+
+	où:
+	\bitem
+		\item $PE=V_{max}-V_{min}$: la tension de Plein Échelle
+		\item $V_{min/max}$: la tension min/max supportées par le CAN
+		\item $e$ l'erreur de quantification
+		\item $N_b$: le nombre de bits utilisés par la quantification
+	\eitem
+
+	On peu poser le pas de quantification:
+	\be
+		\coloredbox{green!50!black}{q = PE/2^{N_b}}
+	\ee
+\edefbox
+
+Ainsi on peut réécrire la somme précédente selon:
+\be
+	\l(\sum_{j=1}^{N_b+1} \dfrac{b_j[k]}{2^j}\r)\d PE &=& 
+	\sum_{j=1}^{N_b+1} \dfrac{b_j[k]}{2^j} \d PE+\dfrac{PE}{2^{N_b+1}}\\
+	&=& \sum_{j=1}^{N_b+1} b_j[k]2^{N_b-j}\dfrac{PE}{2^{N_b}}+\dfrac{q}{2}\\
+	&=& Nq+\dfrac{q}{2}
+\ee
+
+
+Ce qui permet de réécrire le signal $x$ à l'échantillon $k$ selon:
+\be
+	x[k] = V_{min}+\l(N+\dfrac{1}{2}\r)\d q+e
+\ee
+
+où la sortie numérique du convertisseur $N$ est:
+\be
+	\coloredbox{green!50!black}{N = \sum_{j=1}^{N_b+1} b_j[k]2^{N_b-j}}
+\ee
+
+\paragraph{Remarques}
+On note:
+\bitem
+	\item $b_1$: le Most Significant Bit (MSB)
+	\item $b_{N_b}$: le Least Significant Bit (LSB)
+	\item $+q/2$: ce terme permet de centrer l'erreur: $e\in[-1,1]\d q/2$
+\eitem
+
+\bdbox
+	Par exemple si on a:
+	\be
+		\left\{
+			\begin{array}{ccc}
+				PE & = & 2~[V]\tq V_{max} = -V_{m} = 1~[V]\\
+				N_b &=& 3
+			\end{array}
+		\right.\implies q= 2/(2^3) = 1/4
+	\ee
+
+	Si $x[k] = -0.41~[V]$ alors:
+	\be
+			-0.41 = -1 + (N+0.5)/4+e \iff
+			N = \dfrac{x[k]-e-V_{min}}{q}-\dfrac{1}{2} = 1.86-4\d e
+	\ee
+
+	Or l'erreur est encadrée:
+	\be
+		-\dfrac{q}{2} 	& <e< 		& \dfrac{q}{2}\\
+		1.86+2q 		& >1.86-4e> & 1.86-2q\\
+		2.36 			& >1.86-4e>	& 1.36
+	\ee
+
+	D'où $N=2$.
+
+	Le mot binaire s'écrit donc ici:
+	\be
+		N = 2 	& = & \sum_{j=1}^{N_b+1} b_j[k]2^{3-j}\\
+				& = & b_1[k]\d 2^2 + b_2[k]\d 2^1 + b_3[k]\d 2^0
+	\ee
+
+	Or $\forall j, b_j\in\{0,1\}$, donc nécessairement:
+	\be
+		x[k] = -0.41 \equiv (0~1~0)
+	\ee
+
+	L'erreur de quantification quant à elle:
+	\be
+		x[k] &=& V_{min}+b_1[k]\dfrac{PE}{2^1}+b_2[k]\dfrac{PE}{2^2}+b_3[k]\dfrac{PE}{2^3}+\dfrac{PE}{2^4}+e\\
+			&=& -1+0+1\d 0.5+0+0.125+0+e \iff e = -0.035\\
+			&=& -1+\l(2+\dfrac{1}{2}\r)\d \dfrac{1}{4}+e \iff e = -0.035
+	\ee
+\edbox
